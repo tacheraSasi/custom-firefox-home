@@ -6,10 +6,9 @@
   <link rel="stylesheet" href="assets/main.css">
   <link rel="shortcut icon" href="assets/icon3.png" type="image/x-icon">
   <title>Leap of faith</title>
-
 </head>
 <body>
-  <div id="name">Tachera Sasi</div>
+  <div id="name" onclick="alert('Hello, Tachera Sasi!')">Tachera Sasi</div>
   <div id="clock">00:00:00</div>
   <div id="date">January 1, 2024</div>
 
@@ -54,9 +53,10 @@
     function searchGoogle(event) {
       if (event.key === 'Enter') {
         const query = document.getElementById('search').value;
-        window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
       }
     }
+
 
     setInterval(updateClock, 1000);
     updateClock();
