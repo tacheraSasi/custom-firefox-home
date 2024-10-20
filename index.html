@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/main.css">
+  <link rel="shortcut icon" href="assets/icon3.png" type="image/x-icon">
+  <title>Leap of faith</title>
+
+</head>
+<body>
+  <div id="name">Tachera Sasi</div>
+  <div id="clock">00:00:00</div>
+  <div id="date">January 1, 2024</div>
+
+  <input type="text" id="search" placeholder="Search Google..." onkeydown="searchGoogle(event)">
+  
+  <div class="favorite-links">
+    <a href="https://www.youtube.com/" target="_blank">YouTube</a>
+    <a href="https://www.github.com/" target="_blank">GitHub</a>
+    <a href="https://mail.google.com/" target="_blank">Gmail</a>
+    <a href="https://www.ekilie.com/" target="_blank">ekilie</a>
+    <a href="https://magreth.ekilie.com/" target="_blank">magreth</a>
+  </div>
+
+  <div class="social-icons">
+    <a href="https://www.linkedin.com/tacheraSasi" target="_blank">🔗</a>
+    <a href="https://twitter.com/tacheraSasi" target="_blank">🐦</a>
+    <a href="https://github.com/tacheraSasi" target="_blank">💻</a>
+  </div>
+
+  <div id="footer">"The best way to predict the future is to invent it." - Alan Kay</div>
+
+  <div class="particles">
+    <canvas id="particle-canvas"></canvas>
+  </div>
+
+  <script>
+    // Clock update function
+    function updateClock() {
+      const clockElement = document.getElementById('clock');
+      const dateElement = document.getElementById('date');
+      const now = new Date();
+      
+      let hours = now.getHours().toString().padStart(2, '0');
+      let minutes = now.getMinutes().toString().padStart(2, '0');
+      let seconds = now.getSeconds().toString().padStart(2, '0');
+      clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+      
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateElement.textContent = now.toLocaleDateString(undefined, options);
+    }
+
+    function searchGoogle(event) {
+      if (event.key === 'Enter') {
+        const query = document.getElementById('search').value;
+        window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Particle effect
+    function particleEffect() {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particlesArray = [];
+
+      const createParticle = () => {
+        particlesArray.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: (Math.random() * 2) - 1,
+          speedY: (Math.random() * 2) - 1
+        });
+      };
+
+      const drawParticle = (particle) => {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      };
+
+      const updateParticle = (particle) => {
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+        if (particle.size > 0.2) particle.size -= 0.01;
+
+        if (particle.x < 0 || particle.x > canvas.width || particle.y < 0 || particle.y > canvas.height) {
+          particle.x = Math.random() * canvas.width;
+          particle.y = Math.random() * canvas.height;
+          particle.size = Math.random() * 3 + 1;
+        }
+      };
+
+      const animateParticles = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particlesArray.forEach((particle, index) => {
+          updateParticle(particle);
+          drawParticle(particle);
+        });
+        requestAnimationFrame(animateParticles);
+      };
+
+      for (let i = 0; i < 100; i++) {
+        createParticle();
+      }
+
+      animateParticles();
+    }
+
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('particle-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    particleEffect();
+  </script>
+</body>
+</html>
