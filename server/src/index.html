@@ -1,10 +1,102 @@
 <html>
     <head>
         <title>Seroost</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+            body {
+                margin: 0;
+                padding: 2rem;
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(-45deg, #0e0e16, #1b1b2b, #2d2d3d);
+                background-size: 400% 400%;
+                animation: gradient 10s ease infinite;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                color: white;
+                text-align: center;
+                overflow: hidden;
+            }
+
+            @keyframes gradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+                letter-spacing: 2px;
+                font-weight: 700;
+                cursor: default;
+            }
+
+            #query {
+                width: 80%;
+                max-width: 600px;
+                height: 55px;
+                border: none;
+                border-radius: 30px;
+                padding: 0 20px;
+                font-size: 1.1rem;
+                background-color: rgba(43, 43, 60, 0.7);
+                color: white;
+                outline: none;
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+                transition: box-shadow 0.3s ease, background-color 0.3s ease;
+                margin-bottom: 1.5rem;
+            }
+
+            #query:focus {
+                box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.7);
+                background-color: rgba(43, 43, 60, 0.9);
+            }
+
+            #results {
+                width: 80%;
+                max-width: 600px;
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+
+            #results span {
+                display: block;
+                padding: 15px 20px;
+                margin: 8px 0;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            #results span:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(10px);
+            }
+
+            /* Scrollbar styling */
+            #results::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            #results::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            #results::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Provide Your Query:</h1>
-        <input id="query" type="text" />
+        <h1>Seroost Search</h1>
+        <input id="query" type="text" placeholder="Enter your search query..." />
         <div id="results"></div>
         <script src="index.js"></script>
     </body>
