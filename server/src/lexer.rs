@@ -1,6 +1,7 @@
 pub struct Lexer<'a> {
     content: &'a [char],
 }
+//lexer
 
 impl<'a> Lexer<'a> {
     pub fn new(content: &'a [char]) -> Self {
