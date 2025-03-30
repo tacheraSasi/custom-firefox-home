@@ -5,6 +5,6 @@
 ## Quick Start
 
 ```console
-$ cargo run serve ./folder/
-$ iexplore.exe http://localhost:6969/
+cargo run serve ./folder/
+iexplore.exe http://localhost:6969/
 ```
