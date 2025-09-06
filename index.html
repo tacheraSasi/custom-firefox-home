@@ -10,7 +10,7 @@
 <body>
   <div id="name" onclick="alert('Hello, Tachera Sasi!')">Tachera Sasi</div>
   <div id="clock">00:00:00</div>
-  <div id="date">January 1, 2024</div>
+  <div id="date">January 1, 2025</div>
 
   <input type="text" id="search" placeholder="Search Google..." onkeydown="searchGoogle(event)">
   
@@ -34,6 +34,8 @@
     <a href="https://github.com/tacheraSasi" target="_blank">💻</a>
   </div>
 
+
+  //TODO: Fetch the quotes from API
   <div id="footer">"The best way to predict the future is to invent it." - Alan Kay</div>
 
   <div class="particles">
@@ -56,6 +58,7 @@
       dateElement.textContent = now.toLocaleDateString(undefined, options);
     }
 
+    //TODO: Add more search engines
     function searchGoogle(event) {
       if (event.key === 'Enter') {
         const query = document.getElementById('search').value;
