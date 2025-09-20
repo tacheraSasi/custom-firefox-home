@@ -12,12 +12,22 @@
     <div id="clock">00:00:00</div>
     <div id="date">January 1, 2025</div>
 
-    <input
-      type="text"
-      id="search"
-      placeholder="Search Google..."
-      onkeydown="searchGoogle(event)"
-    />
+    <div id="search-container">
+      <input
+        type="text"
+        id="search"
+        placeholder="Search Google... (Ctrl+K for options)"
+        onkeydown="handleSearch(event)"
+      />
+
+      <div id="search-engines" class="search-engines hidden">
+        <div class="search-engine" data-engine="google">🔍 Google</div>
+        <div class="search-engine" data-engine="duckduckgo">🦆 DuckDuckGo</div>
+        <div class="search-engine" data-engine="bing">🅱️ Bing</div>
+        <div class="search-engine" data-engine="youtube">📺 YouTube</div>
+        <div class="search-engine" data-engine="github">💻 GitHub</div>
+      </div>
+    </div>
 
     <div class="favorite-links">
       <a href="https://www.youtube.com/" target="_blank">YouTube</a>
@@ -39,8 +49,7 @@
       <a href="https://github.com/tacheraSasi" target="_blank">💻</a>
     </div>
 
-    //TODO: Fetch the quotes from API
-    <div id="footer">
+    <div id="footer" onclick="updateQuote()" title="Click for a new quote (or press 'q')">
       "The best way to predict the future is to invent it." - Alan Kay
     </div>
 
@@ -69,98 +78,253 @@
         dateElement.textContent = now.toLocaleDateString(undefined, options);
       }
 
-      //TODO: Add more search engines
-      function searchGoogle(event) {
-        if (event.key === "Enter") {
-          const query = document.getElementById("search").value;
-          window.open(
-            `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-            "_blank"
-          );
-          query = "";
+      // Search functionality with multiple engines
+      let currentEngine = 'google';
+      let selectedIndex = 0;
+      
+      const searchEngines = {
+        google: 'https://www.google.com/search?q=',
+        duckduckgo: 'https://duckduckgo.com/?q=',
+        bing: 'https://www.bing.com/search?q=',
+        youtube: 'https://www.youtube.com/results?search_query=',
+        github: 'https://github.com/search?q='
+      };
+
+      function handleSearch(event) {
+        const searchEnginesDiv = document.getElementById('search-engines');
+        const engines = document.querySelectorAll('.search-engine');
+        
+        if (event.key === 'Enter') {
+          if (!searchEnginesDiv.classList.contains('hidden')) {
+            // Select highlighted engine
+            const selectedEngine = engines[selectedIndex].dataset.engine;
+            currentEngine = selectedEngine;
+            searchEnginesDiv.classList.add('hidden');
+            updatePlaceholder();
+          } else {
+            // Perform search
+            performSearch();
+          }
+        } else if (event.ctrlKey && event.key === 'k') {
+          event.preventDefault();
+          toggleSearchEngines();
+        } else if (!searchEnginesDiv.classList.contains('hidden')) {
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            selectedIndex = (selectedIndex + 1) % engines.length;
+            updateSelection();
+          } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : engines.length - 1;
+            updateSelection();
+          } else if (event.key === 'Escape') {
+            searchEnginesDiv.classList.add('hidden');
+          }
         }
       }
-      //FIXME: Fetch quotes from API and display them in the footer
-      const api_url = "https://zenquotes.io/api/quotes/";
 
-      async function getapi(url) {
-        const response = await fetch(url);
-        var data = await response.json();
-        console.log(data);
+      function toggleSearchEngines() {
+        const searchEnginesDiv = document.getElementById('search-engines');
+        searchEnginesDiv.classList.toggle('hidden');
+        if (!searchEnginesDiv.classList.contains('hidden')) {
+          selectedIndex = 0;
+          updateSelection();
+        }
       }
 
-      getapi(api_url);
+      function updateSelection() {
+        const engines = document.querySelectorAll('.search-engine');
+        engines.forEach((engine, index) => {
+          engine.classList.toggle('selected', index === selectedIndex);
+        });
+      }
+
+      function updatePlaceholder() {
+        const searchInput = document.getElementById('search');
+        const engineNames = {
+          google: 'Google',
+          duckduckgo: 'DuckDuckGo',
+          bing: 'Bing',
+          youtube: 'YouTube',
+          github: 'GitHub'
+        };
+        searchInput.placeholder = `Search ${engineNames[currentEngine]}... (Ctrl+K for options)`;
+      }
+
+      function performSearch() {
+        const query = document.getElementById('search').value.trim();
+        if (query) {
+          window.open(searchEngines[currentEngine] + encodeURIComponent(query), '_blank');
+          document.getElementById('search').value = '';
+        }
+      }
+
+      // Click handlers for search engines
+      document.addEventListener('DOMContentLoaded', function() {
+        const engines = document.querySelectorAll('.search-engine');
+        engines.forEach((engine, index) => {
+          engine.addEventListener('click', function() {
+            currentEngine = this.dataset.engine;
+            document.getElementById('search-engines').classList.add('hidden');
+            updatePlaceholder();
+          });
+        });
+
+        // Close search engines when clicking outside
+        document.addEventListener('click', function(event) {
+          const searchContainer = document.getElementById('search-container');
+          if (!searchContainer.contains(event.target)) {
+            document.getElementById('search-engines').classList.add('hidden');
+          }
+        });
+      });
+      // Fetch inspirational quotes
+      const quotes = [
+        "The best way to predict the future is to invent it. - Alan Kay",
+        "Innovation distinguishes between a leader and a follower. - Steve Jobs",
+        "The only way to do great work is to love what you do. - Steve Jobs",
+        "Life is what happens to you while you're busy making other plans. - John Lennon",
+        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+        "It is during our darkest moments that we must focus to see the light. - Aristotle",
+        "The way to get started is to quit talking and begin doing. - Walt Disney",
+        "Don't let yesterday take up too much of today. - Will Rogers",
+        "You learn more from failure than from success. Don't let it stop you. - Unknown",
+        "If you are working on something that you really care about, you don't have to be pushed. - Steve Jobs"
+      ];
+
+      function updateQuote() {
+        const footerElement = document.getElementById("footer");
+        footerElement.classList.add('updating');
+        
+        setTimeout(() => {
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+          footerElement.textContent = randomQuote;
+          footerElement.classList.remove('updating');
+        }, 150);
+      }
+
+      // Update quote every 30 seconds
+      setInterval(updateQuote, 30000);
+      
+      // Set initial random quote
+      updateQuote();
 
       setInterval(updateClock, 1000);
       updateClock();
 
-      // Particle effect
+      // Optimized particle effect
       function particleEffect() {
         const canvas = document.getElementById("particle-canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
 
         const particlesArray = [];
+        const maxParticles = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000));
 
         const createParticle = () => {
-          particlesArray.push({
+          return {
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-            size: Math.random() * 3 + 1,
-            speedX: Math.random() * 2 - 1,
-            speedY: Math.random() * 2 - 1,
-          });
+            size: Math.random() * 2 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.8,
+            speedY: (Math.random() - 0.5) * 0.8,
+            opacity: Math.random() * 0.8 + 0.2
+          };
         };
 
         const drawParticle = (particle) => {
-          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+          ctx.globalAlpha = particle.opacity;
+          ctx.fillStyle = "white";
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.closePath();
           ctx.fill();
         };
 
         const updateParticle = (particle) => {
           particle.x += particle.speedX;
           particle.y += particle.speedY;
-          if (particle.size > 0.2) particle.size -= 0.01;
 
-          if (
-            particle.x < 0 ||
-            particle.x > canvas.width ||
-            particle.y < 0 ||
-            particle.y > canvas.height
-          ) {
-            particle.x = Math.random() * canvas.width;
-            particle.y = Math.random() * canvas.height;
-            particle.size = Math.random() * 3 + 1;
-          }
+          // Wrap around screen
+          if (particle.x < 0) particle.x = canvas.width;
+          if (particle.x > canvas.width) particle.x = 0;
+          if (particle.y < 0) particle.y = canvas.height;
+          if (particle.y > canvas.height) particle.y = 0;
+          
+          // Subtle opacity animation
+          particle.opacity += (Math.random() - 0.5) * 0.02;
+          particle.opacity = Math.max(0.1, Math.min(0.8, particle.opacity));
         };
 
-        const animateParticles = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          particlesArray.forEach((particle, index) => {
-            updateParticle(particle);
-            drawParticle(particle);
-          });
+        let lastTime = 0;
+        const animateParticles = (currentTime) => {
+          if (currentTime - lastTime > 16) { // Limit to ~60fps
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particlesArray.forEach((particle) => {
+              updateParticle(particle);
+              drawParticle(particle);
+            });
+            
+            lastTime = currentTime;
+          }
           requestAnimationFrame(animateParticles);
         };
 
-        for (let i = 0; i < 100; i++) {
-          createParticle();
+        // Initialize particles
+        for (let i = 0; i < maxParticles; i++) {
+          particlesArray.push(createParticle());
         }
 
-        animateParticles();
+        animateParticles(0);
+        
+        // Handle resize
+        window.addEventListener("resize", resizeCanvas);
       }
 
-      window.addEventListener("resize", () => {
-        const canvas = document.getElementById("particle-canvas");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      particleEffect();
+
+      // Global keyboard shortcuts
+      document.addEventListener('keydown', function(event) {
+        // Focus search box with '/' key
+        if (event.key === '/' && !event.ctrlKey && !event.altKey) {
+          event.preventDefault();
+          document.getElementById('search').focus();
+        }
+        
+        // Quick search engine shortcuts (Alt + number)
+        if (event.altKey && !event.ctrlKey) {
+          const engines = ['google', 'duckduckgo', 'bing', 'youtube', 'github'];
+          const keyNum = parseInt(event.key);
+          if (keyNum >= 1 && keyNum <= engines.length) {
+            event.preventDefault();
+            currentEngine = engines[keyNum - 1];
+            updatePlaceholder();
+            document.getElementById('search').focus();
+          }
+        }
+        
+        // New quote with 'q' key
+        if (event.key === 'q' && !event.ctrlKey && !event.altKey && document.activeElement.tagName !== 'INPUT') {
+          updateQuote();
+        }
       });
 
-      particleEffect();
+      // Add helpful tooltip
+      const searchInput = document.getElementById('search');
+      searchInput.title = 'Press / to focus, Ctrl+K for search engines, Alt+1-5 for quick engine selection';
+      
+      // Improve accessibility
+      document.getElementById('search-engines').setAttribute('role', 'listbox');
+      document.querySelectorAll('.search-engine').forEach(engine => {
+        engine.setAttribute('role', 'option');
+        engine.setAttribute('tabindex', '0');
+      });
     </script>
   </body>
 </html>

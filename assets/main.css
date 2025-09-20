@@ -101,11 +101,19 @@ body {
   bottom: 20px;
   font-size: 1.1rem;
   opacity: 0.7;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
 #footer:hover {
   opacity: 1;
+  transform: translateY(-2px);
+}
+
+#footer.updating {
+  opacity: 0.3;
+  transform: scale(0.95);
 }
 
 .social-icons {
@@ -129,4 +137,44 @@ canvas {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+.search-engines {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(43, 43, 60, 0.95);
+  border-radius: 15px;
+  padding: 10px;
+  margin-top: 5px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 250px;
+}
+
+.search-engines.hidden {
+  display: none;
+}
+
+.search-engine {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.search-engine:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-engine.selected {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#search-container {
+  position: relative;
+  width: 80%;
+  max-width: 600px;
 }
